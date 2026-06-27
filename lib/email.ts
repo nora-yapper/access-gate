@@ -1,8 +1,7 @@
 import { Resend } from "resend";
 
 type EntryNotification = {
-  name: string;
-  surname: string;
+  fullName: string;
   email: string;
   code: string;
   entryId: string;
@@ -26,7 +25,7 @@ export async function sendEntryNotification(entry: EntryNotification): Promise<v
   const resend = new Resend(apiKey);
   const lines = [
     `Entry ID: ${entry.entryId}`,
-    `Name: ${entry.name} ${entry.surname}`,
+    `Name: ${entry.fullName}`,
     `Email: ${entry.email}`,
     `Code used: ${entry.code}`,
     `Recorded: ${new Date().toISOString()}`,

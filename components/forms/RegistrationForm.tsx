@@ -15,16 +15,16 @@ export function RegistrationForm() {
   const [phase, setPhase] = useState<Phase>("entering");
   const [entryLine, setEntryLine] = useState("Session active.");
   const [status, setStatus] = useState("");
-  const [form, setForm] = useState({ name: "", surname: "", email: "" });
+  const [form, setForm] = useState({ fullName: "", email: "" });
 
   // Procedural entry sequence before revealing the form.
   useEffect(() => {
     let active = true;
     (async () => {
-      await sleep(rand(200, 400));
+      await sleep(rand(800, 1200));
       if (!active) return;
-      setEntryLine("Proceed with registration.");
-      await sleep(rand(200, 400));
+      setEntryLine("Access granted.");
+      await sleep(rand(800, 1200));
       if (!active) return;
       setPhase("ready");
     })();
@@ -40,8 +40,7 @@ export function RegistrationForm() {
       setForm((f) => ({ ...f, [field]: e.target.value }));
   }
 
-  const canSubmit =
-    form.name.trim() && form.surname.trim() && form.email.trim() && !submitting;
+  const canSubmit = form.fullName.trim() && form.email.trim() && !submitting;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +58,7 @@ export function RegistrationForm() {
 
     setStatus("Submitting…");
     await sleep(300);
-    setStatus("Recording entry…");
+    setStatus("Confirming information…");
     await sleep(rand(400, 700));
 
     const result = await request;
@@ -95,28 +94,26 @@ export function RegistrationForm() {
   return (
     <div className="fade-in">
       <header className="mb-10">
-        <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Registry · Entry</p>
+        <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Record details</p>
         <h1 className="mt-3 text-[15px] uppercase tracking-[0.28em] text-foreground">
-          Record details
+          Welcome
         </h1>
+        <p className="mt-6 text-[12px] leading-relaxed tracking-[0.06em] text-muted">
+          Project01 is ready.<br />
+          Your startup. Built step by step.<br />
+          Before public launch, we're inviting you to get early access.<br />
+          To continue, enter your name and email below.
+        </p>
       </header>
 
       <form onSubmit={onSubmit} className="space-y-6">
         <Input
-          id="name"
-          label="Name"
-          autoComplete="given-name"
-          value={form.name}
+          id="fullName"
+          label="Full name"
+          autoComplete="name"
+          value={form.fullName}
           disabled={submitting}
-          onChange={update("name")}
-        />
-        <Input
-          id="surname"
-          label="Surname"
-          autoComplete="family-name"
-          value={form.surname}
-          disabled={submitting}
-          onChange={update("surname")}
+          onChange={update("fullName")}
         />
         <Input
           id="email"
@@ -129,7 +126,7 @@ export function RegistrationForm() {
           onChange={update("email")}
         />
         <Button type="submit" disabled={!canSubmit}>
-          {submitting ? "Processing" : "Submit entry"}
+          {submitting ? "Processing" : "Continue"}
         </Button>
       </form>
 

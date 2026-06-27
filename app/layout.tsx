@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Red_Hat_Mono } from "next/font/google";
 import "./globals.css";
 import { SystemChrome } from "@/components/system/SystemChrome";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const redHatMono = Red_Hat_Mono({
+  variable: "--font-red-hat-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${redHatMono.variable} h-full antialiased`}>
       <body className="sys-grid sys-scan relative min-h-dvh">
         <SystemChrome />
         <main className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-5 py-16">

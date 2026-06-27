@@ -43,8 +43,7 @@ export async function POST(request: Request) {
   const { data: user, error: userError } = await supabase
     .from("users")
     .insert({
-      name: result.data.name,
-      surname: result.data.surname,
+      full_name: result.data.fullName,
       email: result.data.email,
       code_id: session.code_id,
       entry_id: entryId,
@@ -53,6 +52,7 @@ export async function POST(request: Request) {
     .single();
 
   if (userError || !user) {
+    console.error("[submit-user] insert failed:", userError);
     return NextResponse.json({ ok: false, error: "Could not record entry." }, { status: 500 });
   }
 
@@ -76,8 +76,7 @@ export async function POST(request: Request) {
 
   // Notify (non-blocking on failure).
   await sendEntryNotification({
-    name: result.data.name,
-    surname: result.data.surname,
+    fullName: result.data.fullName,
     email: result.data.email,
     code: codeRow?.code ?? "—",
     entryId,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STEPS = ["Entry recorded.", "Registry updated.", "You will be contacted."];
+const STEPS = ["Access granted.", "Information received.", "We'll be in touch shortly."];
 
 /**
  * Final screen. Reveals the system messages one by one, then settles with the
@@ -24,7 +24,7 @@ export function ConfirmationSequence({ entryId }: { entryId: string }) {
   return (
     <div className="fade-in">
       <p className="mb-8 text-[10px] uppercase tracking-[0.32em] text-muted">
-        Registry · Confirmation
+        Entry Confirmation
       </p>
 
       <div className="space-y-3">

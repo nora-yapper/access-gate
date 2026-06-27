@@ -38,8 +38,8 @@ export function SystemChrome() {
   return (
     <div className="pointer-events-none fixed inset-0 z-20 select-none text-[10px] tracking-[0.18em] text-muted">
       <span className="absolute left-4 top-4 uppercase">SYS.TIME {time}</span>
-      <span className="absolute right-4 top-4 uppercase">{sessionId}</span>
-      <span className="absolute bottom-4 left-4 uppercase">REGISTRY · ONLINE</span>
+      <span className="absolute right-4 top-4 uppercase">Status: Active</span>
+      <span className="absolute bottom-4 left-4 uppercase">Access Window: 48</span>
       <span className="absolute bottom-4 right-4 uppercase">SECURE CHANNEL</span>
     </div>
   );

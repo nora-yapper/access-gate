@@ -1,6 +1,5 @@
 export type RegistrationInput = {
-  name: string;
-  surname: string;
+  fullName: string;
   email: string;
 };
 
@@ -18,13 +17,11 @@ export function validateRegistration(
     return { ok: false, error: "Invalid payload." };
   }
   const b = body as Record<string, unknown>;
-  const name = typeof b.name === "string" ? b.name.trim() : "";
-  const surname = typeof b.surname === "string" ? b.surname.trim() : "";
+  const fullName = typeof b.fullName === "string" ? b.fullName.trim() : "";
   const email = typeof b.email === "string" ? b.email.trim() : "";
 
-  if (name.length < 1 || name.length > 120) return { ok: false, error: "Name required." };
-  if (surname.length < 1 || surname.length > 120) return { ok: false, error: "Surname required." };
+  if (fullName.length < 1 || fullName.length > 241) return { ok: false, error: "Full name required." };
   if (!EMAIL_RE.test(email) || email.length > 254) return { ok: false, error: "Valid email required." };
 
-  return { ok: true, data: { name, surname, email } };
+  return { ok: true, data: { fullName, email } };
 }

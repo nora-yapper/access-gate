@@ -35,10 +35,7 @@ export function CodeForm() {
       .catch(() => ({ ok: false }));
 
     setStatus("Verifying code…");
-    await sleep(rand(300, 500));
-    setStatus("Checking registry…");
-    await sleep(rand(300, 700));
-
+    await sleep(rand(600, 1200));
     const result = await request;
 
     if (result?.ok) {
@@ -46,7 +43,7 @@ export function CodeForm() {
       setStatus("Code recognized.");
       await sleep(300);
       setPhase("preparing");
-      await sleep(rand(700, 1200));
+      await sleep(rand(1400, 1800));
       router.push("/register");
       return;
     }
@@ -84,7 +81,7 @@ export function CodeForm() {
   return (
     <div className="fade-in">
       <header className="mb-10">
-        <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Registry · Checkpoint</p>
+        <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Visitor Detected</p>
         <h1 className="mt-3 text-[15px] uppercase tracking-[0.28em] text-foreground">
           Access verification
         </h1>
@@ -104,7 +101,7 @@ export function CodeForm() {
           onChange={(e) => setCode(e.target.value)}
         />
         <Button type="submit" disabled={locked || !code.trim()}>
-          {locked ? "Processing" : "Proceed"}
+          {locked ? "Processing" : "Enter"}
         </Button>
       </form>
 

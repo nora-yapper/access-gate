@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -10,12 +10,39 @@ const rand = (min: number, max: number) => Math.floor(min + Math.random() * (max
 
 type Phase = "idle" | "checking" | "preparing" | "denied";
 
+const VISITOR = "Visitor Detected";
+
 export function CodeForm() {
   const router = useRouter();
   const [code, setCode] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [status, setStatus] = useState<string>("");
   const attempts = useRef(0);
+  const [revealStep, setRevealStep] = useState(0);
+  const [typedChars, setTypedChars] = useState(0);
+  const hasRevealed = useRef(false);
+
+  useEffect(() => {
+    if (hasRevealed.current) {
+      setRevealStep(3);
+      setTypedChars(VISITOR.length);
+      return;
+    }
+    hasRevealed.current = true;
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    timers.push(setTimeout(() => setRevealStep(1), 0));
+
+    for (let i = 0; i < VISITOR.length; i++) {
+      timers.push(setTimeout(() => setTypedChars(i + 1), 120 + i * 65));
+    }
+
+    const doneTyping = 120 + VISITOR.length * 65;
+    timers.push(setTimeout(() => setRevealStep(2), doneTyping + 180));
+    timers.push(setTimeout(() => setRevealStep(3), doneTyping + 420));
+
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const locked = phase === "checking" || phase === "preparing";
 
@@ -79,41 +106,52 @@ export function CodeForm() {
   }
 
   return (
-    <div className="fade-in">
+    <div>
       <header className="mb-10">
-        <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Visitor Detected</p>
-        <h1 className="mt-3 text-[15px] uppercase tracking-[0.28em] text-foreground">
-          Access verification
-        </h1>
-      </header>
-
-      <form onSubmit={onSubmit} className="space-y-6">
-        <Input
-          id="code"
-          label="Access code"
-          autoComplete="off"
-          autoCapitalize="characters"
-          spellCheck={false}
-          inputMode="text"
-          placeholder="________"
-          value={code}
-          disabled={locked}
-          onChange={(e) => setCode(e.target.value)}
-        />
-        <Button type="submit" disabled={locked || !code.trim()}>
-          {locked ? "Processing" : "Enter"}
-        </Button>
-      </form>
-
-      <div className="mt-6 min-h-[1.25rem] text-[12px] tracking-[0.06em]">
-        {status && (
-          <p className={phase === "denied" ? "text-danger" : "text-accent"}>
-            <span className="text-muted">› </span>
-            {status}
-            {phase === "checking" && <span className="blink">_</span>}
+        {revealStep >= 1 && (
+          <p className="text-[11px] sm:text-[10px] uppercase tracking-[0.32em] text-muted">
+            {VISITOR.slice(0, typedChars)}
+            {typedChars < VISITOR.length && <span className="blink">_</span>}
           </p>
         )}
-      </div>
+        {revealStep >= 2 && (
+          <h1 className="fade-in mt-3 text-[17px] sm:text-[15px] uppercase tracking-[0.28em] text-foreground">
+            Access verification
+          </h1>
+        )}
+      </header>
+
+      {revealStep >= 3 && (
+        <div className="fade-in">
+          <form onSubmit={onSubmit} className="space-y-6">
+            <Input
+              id="code"
+              label="Access code"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              inputMode="text"
+              placeholder="________"
+              value={code}
+              disabled={locked}
+              onChange={(e) => setCode(e.target.value)}
+            />
+            <Button type="submit" disabled={locked || !code.trim()}>
+              {locked ? "Processing" : "Enter"}
+            </Button>
+          </form>
+
+          <div className="mt-6 min-h-[1.25rem] text-[13px] sm:text-[12px] tracking-[0.06em]">
+            {status && (
+              <p className={phase === "denied" ? "text-danger" : "text-accent"}>
+                <span className="text-muted">› </span>
+                {status}
+                {phase === "checking" && <span className="blink">_</span>}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

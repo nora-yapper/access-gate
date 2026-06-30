@@ -46,7 +46,7 @@ Project01 Crew`;
 
   try {
     await resend.emails.send({
-      from: "info@project01.io",
+      from: "Project01 <info@project01.io>",
       to: entry.email,
       subject: "You're in.",
       text,

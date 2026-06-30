@@ -3,7 +3,7 @@ import { getServiceClient } from "@/lib/supabase";
 import { getSession, clearSession } from "@/lib/session";
 import { validateRegistration } from "@/lib/validation";
 import { generateEntryId } from "@/lib/ids";
-import { sendEntryNotification } from "@/lib/email";
+import { sendEntryNotification, sendRegistrationConfirmation } from "@/lib/email";
 import { cookies } from "next/headers";
 
 /**
@@ -75,6 +75,10 @@ export async function POST(request: Request) {
   });
 
   // Notify (non-blocking on failure).
+  await sendRegistrationConfirmation({
+    fullName: result.data.fullName,
+    email: result.data.email,
+  });
   await sendEntryNotification({
     fullName: result.data.fullName,
     email: result.data.email,

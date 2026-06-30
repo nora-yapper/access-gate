@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 type EntryNotification = {
   fullName: string;
@@ -6,6 +7,51 @@ type EntryNotification = {
   code: string;
   entryId: string;
 };
+
+export async function sendRegistrationConfirmation(entry: {
+  fullName: string;
+  email: string;
+}): Promise<void> {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  const calendlyUrl = process.env.CALENDLY_URL;
+
+  if (!user || !pass) {
+    console.log("[registration-confirmation] (Gmail not configured, logging only)", entry);
+    return;
+  }
+
+  const firstName = entry.fullName.trim().split(" ")[0];
+  const transporter = nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+
+  const text = `Hi ${firstName},
+
+Thanks for your interest in Project01.
+
+Project01 helps founders build their startups step by step, from idea to product, in one place.
+
+Before launching publicly, we're inviting a small number of people to get early access.
+
+To claim yours, book a session below:
+
+${calendlyUrl ?? ""}
+
+We'll walk you through Project01, answer any questions, and get you set up.
+
+As a thank you, everyone who completes a session will receive one month of free access.
+
+Looking forward to meeting you.
+
+—
+Antonia, Nora & Vitomir
+Project01 Crew`;
+
+  try {
+    await transporter.sendMail({ from: user, to: entry.email, subject: "You're in.", text });
+  } catch (err) {
+    console.error("[registration-confirmation] send failed:", err);
+  }
+}
 
 /**
  * Sends an internal notification on a new registry entry.

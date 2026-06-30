@@ -1,5 +1,4 @@
 import { Resend } from "resend";
-import nodemailer from "nodemailer";
 
 type EntryNotification = {
   fullName: string;
@@ -12,17 +11,16 @@ export async function sendRegistrationConfirmation(entry: {
   fullName: string;
   email: string;
 }): Promise<void> {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
+  const apiKey = process.env.RESEND_API_KEY;
   const calendlyUrl = process.env.CALENDLY_URL;
 
-  if (!user || !pass) {
-    console.log("[registration-confirmation] (Gmail not configured, logging only)", entry);
+  if (!apiKey) {
+    console.log("[registration-confirmation] (Resend not configured, logging only)", entry);
     return;
   }
 
   const firstName = entry.fullName.trim().split(" ")[0];
-  const transporter = nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+  const resend = new Resend(apiKey);
 
   const text = `Hi ${firstName},
 
@@ -47,7 +45,12 @@ Antonia, Nora & Vitomir
 Project01 Crew`;
 
   try {
-    await transporter.sendMail({ from: user, to: entry.email, subject: "You're in.", text });
+    await resend.emails.send({
+      from: "info@project01.io",
+      to: entry.email,
+      subject: "You're in.",
+      text,
+    });
   } catch (err) {
     console.error("[registration-confirmation] send failed:", err);
   }
